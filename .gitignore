@@ -1,0 +1,50 @@
+# .NET Core build output
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.dll
+*.exe
+*.pdb
+
+# Visual Studio
+.vs/
+*.vsidx
+*.vspscc
+*.vsscc
+*.vssettings
+*.suo
+*.user
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Configuration files with sensitive data
+appsettings.Development.json
+appsettings.*.json
+!appsettings.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Files
+.DS_Store
+Thumbs.db
