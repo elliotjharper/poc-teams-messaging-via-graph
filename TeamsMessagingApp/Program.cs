@@ -1,6 +1,7 @@
 ﻿using Azure.Identity;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
+using System.Text.RegularExpressions;
 
 namespace TeamsMessagingApp
 {
@@ -23,6 +24,13 @@ namespace TeamsMessagingApp
             if (string.IsNullOrWhiteSpace(targetUserEmail))
             {
                 Console.WriteLine("Error: Email address is required.");
+                return;
+            }
+
+            // Validate email format
+            if (!IsValidEmail(targetUserEmail))
+            {
+                Console.WriteLine("Error: Invalid email address format.");
                 return;
             }
 
@@ -90,7 +98,8 @@ namespace TeamsMessagingApp
         {
             try
             {
-                // Sanitize the email to prevent OData injection
+                // Email is already validated at this point, but sanitize for OData query
+                // Replace single quotes to prevent OData injection
                 string sanitizedEmail = email.Replace("'", "''");
                 
                 // Search for the user by email
@@ -106,6 +115,24 @@ namespace TeamsMessagingApp
             {
                 Console.WriteLine($"Error looking up user: {ex.Message}");
                 return null;
+            }
+        }
+
+        static bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return false;
+
+            try
+            {
+                // Use a regex pattern to validate email format
+                // This pattern follows RFC 5322 specifications for email addresses
+                var emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+                return Regex.IsMatch(email, emailPattern, RegexOptions.IgnoreCase);
+            }
+            catch
+            {
+                return false;
             }
         }
 
