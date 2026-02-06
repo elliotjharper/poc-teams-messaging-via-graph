@@ -90,10 +90,13 @@ namespace TeamsMessagingApp
         {
             try
             {
+                // Sanitize the email to prevent OData injection
+                string sanitizedEmail = email.Replace("'", "''");
+                
                 // Search for the user by email
                 var users = await graphClient.Users.GetAsync(requestConfig =>
                 {
-                    requestConfig.QueryParameters.Filter = $"mail eq '{email}' or userPrincipalName eq '{email}'";
+                    requestConfig.QueryParameters.Filter = $"mail eq '{sanitizedEmail}' or userPrincipalName eq '{sanitizedEmail}'";
                     requestConfig.QueryParameters.Select = new[] { "id", "displayName", "mail", "userPrincipalName" };
                 });
 
@@ -151,7 +154,7 @@ namespace TeamsMessagingApp
                 {
                     createdChat = await graphClient.Chats.PostAsync(chat);
                 }
-                catch (Exception ex)
+                catch (Microsoft.Graph.Models.ODataErrors.ODataError odataEx)
                 {
                     // If chat already exists, try to find it
                     Console.WriteLine("Chat may already exist, searching for existing chat...");
@@ -183,7 +186,7 @@ namespace TeamsMessagingApp
 
                     if (createdChat == null)
                     {
-                        throw new Exception($"Could not create or find chat: {ex.Message}");
+                        throw new Exception($"Could not create or find chat: {odataEx.Error?.Message ?? odataEx.Message}");
                     }
                 }
 
